@@ -1,7 +1,7 @@
 package me.voguh.zomboid.authcompanion.discord;
 
+import me.voguh.source.rcon.SourceRCONClient;
 import me.voguh.zomboid.authcompanion.discord.adapter.GuildMemberListenerAdapter;
-import me.voguh.zomboid.authcompanion.rcon.SourceRCONClient;
 import me.voguh.zomboid.authcompanion.util.EnvProperty;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;

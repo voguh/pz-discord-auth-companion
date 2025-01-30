@@ -1,7 +1,6 @@
 /.idea
 /.vscode
 /dist
-/runtime
 /target
 /.env
 

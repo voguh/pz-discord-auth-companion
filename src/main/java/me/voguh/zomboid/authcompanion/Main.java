@@ -1,8 +1,7 @@
 package me.voguh.zomboid.authcompanion;
 
+import me.voguh.source.rcon.SourceRCONClient;
 import me.voguh.zomboid.authcompanion.discord.DiscordManager;
-import me.voguh.zomboid.authcompanion.rcon.SourceRCONClient;
-import me.voguh.zomboid.authcompanion.settings.SettingsManager;
 import me.voguh.zomboid.authcompanion.util.EnvProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,6 @@ public class Main {
     public static void main(String[] args) {
         try {
             EnvProperty.startupValidate();
-            SettingsManager.load();
 
             String[] rconAddress = EnvProperty.RCON_ADDRESS.split(":");
             if (rconAddress.length != 2) {

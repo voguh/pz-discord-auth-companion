@@ -40,9 +40,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>2.3</version>
+            <groupId>me.voguh.source</groupId>
+            <artifactId>source-rcon</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -92,7 +92,7 @@
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <transformers>
                                 <transformer
-                                    mplementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <Main-Class>me.voguh.zomboid.authcompanion.Main</Main-Class>
                                 </transformer>
                             </transformers>

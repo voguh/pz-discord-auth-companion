@@ -1,7 +1,7 @@
 package me.voguh.zomboid.authcompanion.discord.adapter;
 
-import me.voguh.zomboid.authcompanion.rcon.SourceRCONClient;
-import me.voguh.zomboid.authcompanion.settings.SettingsManager;
+import me.voguh.source.rcon.SourceRCONClient;
+import me.voguh.zomboid.authcompanion.util.EnvProperty;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
@@ -72,15 +72,15 @@ public class GuildMemberListenerAdapter extends ListenerAdapter {
     }
 
     private boolean isAdmin(List<Role> roles) {
-        return roles.stream().anyMatch(role -> role.getId().equals(SettingsManager.settings().getAdminsRoleId()));
+        return roles.stream().anyMatch(role -> role.getId().equals(EnvProperty.DISCORD_ADMIN_ROLE));
     }
 
     private boolean isModerator(List<Role> roles) {
-        return roles.stream().anyMatch(role -> role.getId().equals(SettingsManager.settings().getModeratorsRoleId()));
+        return roles.stream().anyMatch(role -> role.getId().equals(EnvProperty.DISCORD_MODERATOR_ROLE));
     }
 
     private boolean isPlayer(List<Role> roles) {
-        return roles.stream().anyMatch(role -> role.getId().equals(SettingsManager.settings().getPlayersRoleId()));
+        return roles.stream().anyMatch(role -> role.getId().equals(EnvProperty.DISCORD_PLAYER_ROLE));
     }
 
 }

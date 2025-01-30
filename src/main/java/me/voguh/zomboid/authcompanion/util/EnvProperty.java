@@ -12,6 +12,15 @@ public class EnvProperty {
     public static final String DISCORD_TOKEN = getEnvOrProperty("DISCORD_TOKEN");
 
     @Required
+    public static final String DISCORD_PLAYER_ROLE = getEnvOrProperty("DISCORD_PLAYER_ROLE");
+
+    @Required
+    public static final String DISCORD_MODERATOR_ROLE = getEnvOrProperty("DISCORD_MODERATOR_ROLE");
+
+    @Required
+    public static final String DISCORD_ADMIN_ROLE = getEnvOrProperty("DISCORD_ADMIN_ROLE");
+
+    @Required
     public static final String RCON_ADDRESS = getEnvOrProperty("RCON_ADDRESS");
 
     @Required
