@@ -18,11 +18,15 @@ if [ -d "$ROOT_PATH/dist" ]; then
     rm -rf "$ROOT_PATH/dist";
 fi
 
-echo "===============================================[ Copying to dist ]==============================================="
+echo "============================================[ Copying files to dist ]============================================"
 mkdir "$ROOT_PATH/dist";
 cp -R "$ROOT_PATH/target/lib" "$ROOT_PATH/dist/lib";
 cp -R "$ROOT_PATH"/target/classes/* "$ROOT_PATH/dist";
 cp "$ROOT_PATH/.env.example" "$ROOT_PATH/dist/config.ini";
+cp "$ROOT_PATH/LICENSE" "$ROOT_PATH/dist/LICENSE";
+cp "$ROOT_PATH/README.md" "$ROOT_PATH/dist/README.md";
+
+echo "========================================[ Configuring default log level ]========================================"
 sed -i 's/<root level="DEBUG">/<root level="INFO">/' "$ROOT_PATH/dist/logback.xml"
 
 echo "================================================[ Build Success ]================================================"
