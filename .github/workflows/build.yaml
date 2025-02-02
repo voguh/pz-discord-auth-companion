@@ -65,16 +65,6 @@ jobs:
           path: "${{ github.workspace }}/dist"
           retention-days: 1
 
-      - name: Upload to release
-        if: ${{ github.event_name == 'release' }}
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          RELEASE_TAG: "${{ github.ref_name }}"
-        run: |
-          cd "${{ github.workspace }}/dist" && zip -r "$FILE_NAME" .
-          mv "${{ github.workspace }}/dist/${FILE_NAME}.zip" "${{ github.workspace }}/$FILE_NAME"
-          gh release upload "$RELEASE_TAG" "${FILE_NAME}.zip" --repo $GITHUB_REPOSITORY --clobber
-
   publish-linux:
     if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
     runs-on: ubuntu-22.04
@@ -102,12 +92,3 @@ jobs:
           name: "${{ env.FILE_NAME }}"
           path: "${{ github.workspace }}/dist"
           retention-days: 1
-
-      - name: Upload to release
-        if: ${{ github.event_name == 'release' }}
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          RELEASE_TAG: "${{ github.ref_name }}"
-        run: |
-          tar -czvf "${FILE_NAME}.tar.gz" -C "${{ github.workspace }}/dist" .
-          gh release upload "$RELEASE_TAG" "${FILE_NAME}.tar.gz" --repo $GITHUB_REPOSITORY --clobber
