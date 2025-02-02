@@ -23,16 +23,66 @@ jobs:
           distribution: 'zulu'
           cache: maven
 
-      - name: Build
+      - name: Package
         run: mvn -B clean package
 
       - name: Create artifacts
         if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
-        run: chmod +x "./zztools/publish.sh" && ./zztools/publish.sh
+        run: chmod +x "./zztools/prepublish.sh" && ./zztools/prepublish.sh
+
+      - name: Save dist in cache
+        if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
+        uses: actions/cache@v4
+        with:
+          path: dist
+          key: dist-${{ github.run_id }}
+
+  publish-win:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
+    runs-on: ubuntu-22.04
+    needs:
+      - build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get from cache
+        uses: actions/cache@v4
+        with:
+          path: dist
+          key: dist-${{ github.run_id }}
+
+      - name: Prepare windows artifacts
+        run: chmod +x "./zztools/winpublish.sh" && ./zztools/winpublish.sh
 
       - name: Upload artifacts
         if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ github.repository }}-${{ github.event_name == 'release' && github.event.release.name || github.sha }}.tar.gz"
+          name: "win-${{ github.event_name == 'release' && github.event.release.name || github.sha }}.zip"
+          path: "${{ github.workspace }}/dist"
+
+  publish-linux:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
+    runs-on: ubuntu-22.04
+    needs:
+      - build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get from cache
+        uses: actions/cache@v4
+        with:
+          path: dist
+          key: dist-${{ github.run_id }}
+
+      - name: Prepare windows artifacts
+        run: chmod +x "./zztools/linuxpublish.sh" && ./zztools/linuxpublish.sh
+
+      - name: Upload artifacts
+        if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: "linux-${{ github.event_name == 'release' && github.event.release.name || github.sha }}.tar.gz"
           path: "${{ github.workspace }}/dist"
