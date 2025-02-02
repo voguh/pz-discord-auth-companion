@@ -67,6 +67,7 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
         uses: actions/upload-artifact@v4
         with:
+          name: "${{ steps.compact_dist.outputs.file_name }}"
           path: "${{ github.workspace }}/${{ steps.compact_dist.outputs.file_name }}"
 
   publish-linux:
@@ -98,4 +99,5 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
         uses: actions/upload-artifact@v4
         with:
+          name: "${{ steps.compact_dist.outputs.file_name }}"
           path: "${{ github.workspace }}/${{ steps.compact_dist.outputs.file_name }}"
