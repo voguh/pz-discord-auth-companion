@@ -42,6 +42,8 @@ jobs:
     runs-on: ubuntu-22.04
     needs:
       - build
+    env:
+      FILE_NAME: "windows-${{ github.event_name == 'release' && github.event.release.name || github.sha }}.zip"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -56,25 +58,32 @@ jobs:
         run: chmod +x "./zztools/winpublish.sh" && ./zztools/winpublish.sh
 
       - name: Compact dist
-        id: compact_dist
         run: |
-          export FILE_NAME="windows-${{ github.event_name == 'release' && github.event.release.name || github.sha }}.zip"
           cd "${{ github.workspace }}/dist" && zip -r "$FILE_NAME" .
           mv "${{ github.workspace }}/dist/$FILE_NAME" "${{ github.workspace }}/$FILE_NAME"
-          echo "file_name=$FILE_NAME" >> $GITHUB_ENV
 
       - name: Upload artifacts
         if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ steps.compact_dist.outputs.file_name }}"
-          path: "${{ github.workspace }}/${{ steps.compact_dist.outputs.file_name }}"
+          name: "${{ env.FILE_NAME }}"
+          path: "${{ github.workspace }}/${{ env.FILE_NAME }}"
+
+      - name: Attach into release
+        if: ${{ github.event_name == 'release' }}
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          RELEASE_TAG: "${{ github.ref_name }}"
+        run: |
+          gh release upload "$RELEASE_TAG" $FILE_NAME --repo $GITHUB_REPOSITORY --clobber
 
   publish-linux:
     if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
     runs-on: ubuntu-22.04
     needs:
       - build
+    env:
+      FILE_NAME: "linux-${{ github.event_name == 'release' && github.event.release.name || github.sha }}.tar.gz"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -89,15 +98,20 @@ jobs:
         run: chmod +x "./zztools/linuxpublish.sh" && ./zztools/linuxpublish.sh
 
       - name: Compact dist
-        id: compact_dist
         run: |
-          export FILE_NAME="linux-${{ github.event_name == 'release' && github.event.release.name || github.sha }}.tar.gz"
           tar -czvf "$FILE_NAME" -C "${{ github.workspace }}/dist" .
-          echo "file_name=$FILE_NAME" >> $GITHUB_ENV
 
       - name: Upload artifacts
         if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ steps.compact_dist.outputs.file_name }}"
-          path: "${{ github.workspace }}/${{ steps.compact_dist.outputs.file_name }}"
+          name: "${{ env.FILE_NAME }}"
+          path: "${{ github.workspace }}/${{ env.FILE_NAME }}"
+
+      - name: Attach into release
+        if: ${{ github.event_name == 'release' }}
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          RELEASE_TAG: "${{ github.ref_name }}"
+        run: |
+          gh release upload "$RELEASE_TAG" $FILE_NAME --repo $GITHUB_REPOSITORY --clobber
