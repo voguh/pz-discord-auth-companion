@@ -2,6 +2,9 @@ name: build.yaml
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
   release:
     types:
       - created
@@ -13,7 +16,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up Zulu OpenJDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
@@ -22,3 +25,14 @@ jobs:
 
       - name: Build
         run: mvn -B clean package
+
+      - name: Create artifacts
+        if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
+        run: chmod +x "./zztools/publish.sh" && ./zztools/publish.sh
+
+      - name: Upload artifacts
+        if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ github.repository }}-${{ github.event_name == 'release' && github.event.release.name || github.sha }}.tar.gz"
+          path: "${{ github.workspace }}/dist"
