@@ -43,7 +43,7 @@ jobs:
     needs:
       - build
     env:
-      FILE_NAME: "windows-${{ github.event_name == 'release' && github.event.release.name || github.sha }}.zip"
+      FILE_NAME: "windows-${{ github.event_name == 'release' && github.event.release.name || github.sha }}"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -67,7 +67,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: "${{ env.FILE_NAME }}"
-          path: "${{ github.workspace }}/${{ env.FILE_NAME }}"
+          path: "${{ github.workspace }}/dist"
+          compression: none
 
       - name: Attach into release
         if: ${{ github.event_name == 'release' }}
@@ -75,7 +76,7 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           RELEASE_TAG: "${{ github.ref_name }}"
         run: |
-          gh release upload "$RELEASE_TAG" $FILE_NAME --repo $GITHUB_REPOSITORY --clobber
+          gh release upload "$RELEASE_TAG" "${FILE_NAME}.zip" --repo $GITHUB_REPOSITORY --clobber
 
   publish-linux:
     if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
@@ -83,7 +84,7 @@ jobs:
     needs:
       - build
     env:
-      FILE_NAME: "linux-${{ github.event_name == 'release' && github.event.release.name || github.sha }}.tar.gz"
+      FILE_NAME: "linux-${{ github.event_name == 'release' && github.event.release.name || github.sha }}"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -106,7 +107,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: "${{ env.FILE_NAME }}"
-          path: "${{ github.workspace }}/${{ env.FILE_NAME }}"
+          path: "${{ github.workspace }}/dist"
 
       - name: Attach into release
         if: ${{ github.event_name == 'release' }}
@@ -114,4 +115,4 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           RELEASE_TAG: "${{ github.ref_name }}"
         run: |
-          gh release upload "$RELEASE_TAG" $FILE_NAME --repo $GITHUB_REPOSITORY --clobber
+          gh release upload "$RELEASE_TAG" "${FILE_NAME}.tar.gz" --repo $GITHUB_REPOSITORY --clobber
