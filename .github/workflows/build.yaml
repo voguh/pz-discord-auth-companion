@@ -61,7 +61,7 @@ jobs:
           export FILE_NAME="windows-${{ github.event_name == 'release' && github.event.release.name || github.sha }}.zip"
           cd "${{ github.workspace }}/dist" && zip -r "$FILE_NAME" .
           mv "${{ github.workspace }}/dist/$FILE_NAME" "${{ github.workspace }}/$FILE_NAME"
-          echo "file_name::$FILE_NAME" >> $GITHUB_ENV
+          echo "file_name=$FILE_NAME" >> $GITHUB_ENV
 
       - name: Upload artifacts
         if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
@@ -92,7 +92,7 @@ jobs:
         run: |
           export FILE_NAME="linux-${{ github.event_name == 'release' && github.event.release.name || github.sha }}.tar.gz"
           tar -czvf "$FILE_NAME" -C "${{ github.workspace }}/dist" .
-          echo "file_name::$FILE_NAME" >> $GITHUB_ENV
+          echo "file_name=$FILE_NAME" >> $GITHUB_ENV
 
       - name: Upload artifacts
         if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
