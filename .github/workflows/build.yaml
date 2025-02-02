@@ -57,25 +57,22 @@ jobs:
       - name: Prepare windows artifacts
         run: chmod +x "./zztools/winpublish.sh" && ./zztools/winpublish.sh
 
-      - name: Compact dist
-        run: |
-          cd "${{ github.workspace }}/dist" && zip -r "$FILE_NAME" .
-          mv "${{ github.workspace }}/dist/$FILE_NAME" "${{ github.workspace }}/$FILE_NAME"
-
-      - name: Upload artifacts
+      - name: Create artifacts
         if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
         uses: actions/upload-artifact@v4
         with:
           name: "${{ env.FILE_NAME }}"
           path: "${{ github.workspace }}/dist"
-          compression: none
+          retention-days: 1
 
-      - name: Attach into release
+      - name: Upload to release
         if: ${{ github.event_name == 'release' }}
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           RELEASE_TAG: "${{ github.ref_name }}"
         run: |
+          cd "${{ github.workspace }}/dist" && zip -r "$FILE_NAME" .
+          mv "${{ github.workspace }}/dist/$FILE_NAME" "${{ github.workspace }}/$FILE_NAME"
           gh release upload "$RELEASE_TAG" "${FILE_NAME}.zip" --repo $GITHUB_REPOSITORY --clobber
 
   publish-linux:
@@ -98,21 +95,19 @@ jobs:
       - name: Prepare windows artifacts
         run: chmod +x "./zztools/linuxpublish.sh" && ./zztools/linuxpublish.sh
 
-      - name: Compact dist
-        run: |
-          tar -czvf "$FILE_NAME" -C "${{ github.workspace }}/dist" .
-
-      - name: Upload artifacts
+      - name: Create artifacts
         if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
         uses: actions/upload-artifact@v4
         with:
           name: "${{ env.FILE_NAME }}"
           path: "${{ github.workspace }}/dist"
+          retention-days: 1
 
-      - name: Attach into release
+      - name: Upload to release
         if: ${{ github.event_name == 'release' }}
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           RELEASE_TAG: "${{ github.ref_name }}"
         run: |
+          tar -czvf "$FILE_NAME" -C "${{ github.workspace }}/dist" .
           gh release upload "$RELEASE_TAG" "${FILE_NAME}.tar.gz" --repo $GITHUB_REPOSITORY --clobber
