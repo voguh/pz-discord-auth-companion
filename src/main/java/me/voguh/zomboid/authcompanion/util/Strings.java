@@ -5,7 +5,7 @@ import java.util.Locale;
 public class Strings {
 
     public static boolean isNullOrEmpty(String str) {
-        return str == null || str.isEmpty();
+        return str == null || str.trim().isEmpty();
     }
 
     public static String capitalize(String str) {
