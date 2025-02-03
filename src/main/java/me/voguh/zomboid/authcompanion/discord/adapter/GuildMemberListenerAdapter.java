@@ -40,10 +40,14 @@ public class GuildMemberListenerAdapter extends ListenerAdapter {
         List<Role> roles = event.getMember().getRoles();
 
         try {
-            if (isPlayer(roles)) {
+            boolean isModerator = isModerator(roles);
+            boolean isAdmin = isAdmin(roles);
+            boolean isPlayer = isPlayer(roles) || isModerator || isAdmin;
+
+            if (isPlayer) {
                 rconClient.command("unbanuser \"" + username + "\"");
 
-                String accessLevel = isAdmin(roles) ? "admin" : isModerator(roles) ? "moderator" : "none";
+                String accessLevel = isAdmin ? "admin" : isModerator ? "moderator" : "none";
                 rconClient.command("setaccesslevel \"" + username + "\" \"" + accessLevel + "\"");
             }
         } catch (Exception e) {
@@ -57,10 +61,14 @@ public class GuildMemberListenerAdapter extends ListenerAdapter {
         List<Role> roles = event.getMember().getRoles();
 
         try {
-            if (isPlayer(roles)) {
+            boolean isModerator = isModerator(roles);
+            boolean isAdmin = isAdmin(roles);
+            boolean isPlayer = isPlayer(roles) || isModerator || isAdmin;
+
+            if (isPlayer) {
                 rconClient.command("unbanuser \"" + username + "\"");
 
-                String accessLevel = isAdmin(roles) ? "admin" : isModerator(roles) ? "moderator" : "none";
+                String accessLevel = isAdmin ? "admin" : isModerator ? "moderator" : "none";
                 rconClient.command("setaccesslevel \"" + username + "\" \"" + accessLevel + "\"");
             } else {
                 rconClient.command("setaccesslevel " + username + " none");
