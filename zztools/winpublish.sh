@@ -42,7 +42,7 @@ if [ "$jre64_checksum_calculated" != "$jre64_checksum_expected" ]; then
     echo "SHA256 checksum of jre64 didn't match!"
     exit 1;
 else
-    cd "$ROOT_PATH/dist" && unzip "$JRE_VER-win_x64.zip" && mv "$JRE_VER-win_x64" "jre64" && rm -rf "$JRE_VER-win_x64.tar.gz";
+    cd "$ROOT_PATH/dist" && unzip "$JRE_VER-win_x64.zip" && mv "$JRE_VER-win_x64" "jre64" && rm -rf "$JRE_VER-win_x64.zip";
 fi
 
 echo "============================================[ Copying windows start ]============================================"
