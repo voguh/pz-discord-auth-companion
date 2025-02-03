@@ -75,11 +75,13 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          cd "${{ github.workspace }}/dist" && zip -r "${FILE_NAME}.zip" .
+          cd "${{ github.workspace }}/dist" && zip -r "${FILE_NAME}.zip" . && cd "${{ github.workspace }}"
           mv "${{ github.workspace }}/dist/${FILE_NAME}.zip" "${{ github.workspace }}/${FILE_NAME}.zip"
           gh release upload "${{ github.ref_name }}" "${FILE_NAME}.zip" --repo "${{ github.repository }}" --clobber
+
           sha256sum "${FILE_NAME}.zip" >> "${FILE_NAME}.zip.sha256"
           gh release upload "${{ github.ref_name }}" "${FILE_NAME}.zip.sha256" --repo "${{ github.repository }}" --clobber
+
           md5sum "${FILE_NAME}.zip" >> "${FILE_NAME}.zip.md5"
           gh release upload "${{ github.ref_name }}" "${FILE_NAME}.zip.md5" --repo "${{ github.repository }}" --clobber
 
@@ -119,9 +121,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cd "${{ github.workspace }}/dist" && tar -czvf "${FILE_NAME}.tar.gz" -C"${{ github.workspace }}/dist" .
+          tar -czvf "${FILE_NAME}.tar.gz" -C "${{ github.workspace }}/dist" . && cd "${{ github.workspace }}"
           gh release upload "${{ github.ref_name }}" "${FILE_NAME}.tar.gz" --repo "${{ github.repository }}" --clobber
+
           sha256sum "${FILE_NAME}.tar.gz" >> "${FILE_NAME}.tar.gz.sha256"
           gh release upload "${{ github.ref_name }}" "${FILE_NAME}.tar.gz.sha256" --repo "${{ github.repository }}" --clobber
+
           md5sum "${FILE_NAME}.tar.gz" >> "${FILE_NAME}.tar.gz.md5"
           gh release upload "${{ github.ref_name }}" "${FILE_NAME}.tar.gz.md5" --repo "${{ github.repository }}" --clobber
