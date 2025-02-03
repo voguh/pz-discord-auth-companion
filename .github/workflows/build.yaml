@@ -71,6 +71,9 @@ jobs:
 
       - name: Upload to release
         if: ${{ github.event_name == 'release' }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           cd "${{ github.workspace }}/dist" && zip -r "${FILE_NAME}.zip" .
           mv "${{ github.workspace }}/dist/${FILE_NAME}.zip" "${{ github.workspace }}/${FILE_NAME}.zip"
@@ -112,6 +115,9 @@ jobs:
 
       - name: Upload to release
         if: ${{ github.event_name == 'release' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd "${{ github.workspace }}/dist" && tar -czvf "${FILE_NAME}.tar.gz" -C"${{ github.workspace }}/dist" .
           gh release upload "${{ github.ref_name }}" "${FILE_NAME}.tar.gz" --repo "${{ github.repository }}" --clobber
