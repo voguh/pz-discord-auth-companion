@@ -35,11 +35,15 @@ jobs:
         uses: actions/cache@v4
         with:
           path: dist
-          key: dist-${{ github.run_id }}
+          key: dist-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            dist-
 
   publish-win:
     if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write
     needs:
       - build
     env:
@@ -52,9 +56,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: dist
-          key: dist-${{ github.run_id }}
+          key: dist-${{ runner.os }}-${{ github.sha }}
 
-      - name: Prepare windows artifacts
+      - name: Prepare artifacts
         run: chmod +x "./zztools/winpublish.sh" && ./zztools/winpublish.sh
 
       - name: Create artifacts
@@ -65,9 +69,22 @@ jobs:
           path: "${{ github.workspace }}/dist"
           retention-days: 1
 
+      - name: Upload to release
+        if: ${{ github.event_name == 'release' }}
+        run: |
+          cd "${{ github.workspace }}/dist" && zip -r "${FILE_NAME}.zip" .
+          mv "${{ github.workspace }}/dist/${FILE_NAME}.zip" "${{ github.workspace }}/${FILE_NAME}.zip"
+          gh release upload "${{ github.ref_name }}" "${FILE_NAME}.zip" --repo "${{ github.repository }}" --clobber
+          sha256sum "${FILE_NAME}.zip" >> "${FILE_NAME}.zip.sha256"
+          gh release upload "${{ github.ref_name }}" "${FILE_NAME}.zip.sha256" --repo "${{ github.repository }}" --clobber
+          md5sum "${FILE_NAME}.zip" >> "${FILE_NAME}.zip.md5"
+          gh release upload "${{ github.ref_name }}" "${FILE_NAME}.zip.md5" --repo "${{ github.repository }}" --clobber
+
   publish-linux:
     if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write
     needs:
       - build
     env:
@@ -80,9 +97,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: dist
-          key: dist-${{ github.run_id }}
+          key: dist-${{ runner.os }}-${{ github.sha }}
 
-      - name: Prepare windows artifacts
+      - name: Prepare artifacts
         run: chmod +x "./zztools/linuxpublish.sh" && ./zztools/linuxpublish.sh
 
       - name: Create artifacts
@@ -92,3 +109,13 @@ jobs:
           name: "${{ env.FILE_NAME }}"
           path: "${{ github.workspace }}/dist"
           retention-days: 1
+
+      - name: Upload to release
+        if: ${{ github.event_name == 'release' }}
+        run: |
+          cd "${{ github.workspace }}/dist" && tar -czvf "${FILE_NAME}.tar.gz" -C"${{ github.workspace }}/dist" .
+          gh release upload "${{ github.ref_name }}" "${FILE_NAME}.tar.gz" --repo "${{ github.repository }}" --clobber
+          sha256sum "${FILE_NAME}.tar.gz" >> "${FILE_NAME}.tar.gz.sha256"
+          gh release upload "${{ github.ref_name }}" "${FILE_NAME}.tar.gz.sha256" --repo "${{ github.repository }}" --clobber
+          md5sum "${FILE_NAME}.tar.gz" >> "${FILE_NAME}.tar.gz.md5"
+          gh release upload "${{ github.ref_name }}" "${FILE_NAME}.tar.gz.md5" --repo "${{ github.repository }}" --clobber
