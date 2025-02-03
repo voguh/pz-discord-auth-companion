@@ -5,7 +5,7 @@
 
     <groupId>me.voguh.zomboid</groupId>
     <artifactId>pz-discord-auth-companion</artifactId>
-    <version>1.0.0-rc.2</version>
+    <version>1.0.0-rc.3</version>
 
     <licenses>
         <license>
